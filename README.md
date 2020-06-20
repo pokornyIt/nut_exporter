@@ -8,5 +8,5 @@ NUT client inspired by [lzap/gonutclient](https://github.com/lzap/gonutclient).
 - Add more config options
 - Direct communicate with NUT server
 
-#Not support
+# Not support
 - secure connection (for now)
