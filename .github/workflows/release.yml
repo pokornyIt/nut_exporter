@@ -18,7 +18,6 @@ jobs:
         goarch: [amd64, arm64]
         exclude:
           # windows/arm64 and darwin/arm64 seems useless
-            goos: darwin
           - goarch: arm64
             goos: darwin
           - goarch: arm64
