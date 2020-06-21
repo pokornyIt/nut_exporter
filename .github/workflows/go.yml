@@ -1,4 +1,4 @@
-name: Go
+name: Build
 
 on:
   push:
@@ -31,7 +31,10 @@ jobs:
         fi
 
     - name: Build
-      run: go build -v .
+      run: go build -v -ldflags="-X 'main.Version=0.0.1' -X 'main.Branch=$(git rev-parse --short HEAD)' -X 'main.BuildDate=$(date -Is)' -X main.BuildUser='$(id -u -n)'" .
 
     - name: Test
       run: go test -v .
+
+    - name: Show Data
+      run: ./nut_exporter --config.show
