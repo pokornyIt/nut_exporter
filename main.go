@@ -17,11 +17,16 @@ import (
 
 const (
 	NameSpace       = "nut"
-	applicationName = "nut_exporter direct communication with NUT server"
+	applicationName = "nut_exporter"
 )
 
 var (
-	logger log.Logger // logger
+	logger    log.Logger // logger
+	Version   string
+	Revision  string
+	Branch    string
+	BuildUser string
+	BuildDate string
 )
 
 func updateStatus(output string) {
@@ -103,7 +108,12 @@ func recordMetrics() {
 func main() {
 	promlogConfig := &promlog.Config{}
 	flag.AddFlags(kingpin.CommandLine, promlogConfig)
-	kingpin.Version(version.Print("nut_exporter"))
+	version.Branch = Branch
+	version.Revision = Revision
+	version.BuildUser = BuildUser
+	version.BuildDate = BuildDate
+	version.Version = Version
+	kingpin.Version(version.Print(applicationName))
 	kingpin.HelpFlag.Short('h')
 	kingpin.Parse()
 	logger = promlog.New(promlogConfig)
