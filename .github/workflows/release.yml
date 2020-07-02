@@ -1,12 +1,8 @@
-name: Release Go Binaries
+name: Release
 
 on:
   release:
     types: [created]
-
-#env:
-#  CMD_PATH: ./cmd/vt2geojson
-
 
 jobs:
   releases-matrix:
@@ -38,6 +34,5 @@ jobs:
           goos: ${{ matrix.goos }}
           goarch: ${{ matrix.goarch }}
           pre_command: go get -v ./...
-#          project_path: "${{ env.CMD_PATH }}"
           build_flags: -v
           ldflags: -X "main.Version=${{ env.APP_VERSION }}" -X "main.BuildDate=${{ env.BUILD_TIME }}" -X main.Branch=${{ github.sha }} -X main.Revision=${{ github.ref }}

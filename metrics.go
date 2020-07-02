@@ -17,10 +17,10 @@ type metricsGaugeVec struct {
 	name     string
 }
 
-type metricFunc interface {
-	updateFromSource(output string)
-}
-
+//type metricFunc interface {
+//	updateFromSource(output string)
+//}
+//
 // Regex
 var (
 	batteryChargeRegex         = regexp.MustCompile(`(?:battery[.]charge:(?:\s)(.*))`)
@@ -57,163 +57,163 @@ var (
 // NUT Gauges https://networkupstools.org/docs/user-manual.chunked/apcs01.html
 var (
 	batteryCharge = prometheus.NewGauge(prometheus.GaugeOpts{
-		Namespace: NameSpace,
+		Namespace: nameSpace,
 		Name:      "battery_charge",
 		Help:      "Current battery charge (percent)",
 	})
 
 	batteryChargeLow = prometheus.NewGauge(prometheus.GaugeOpts{
-		Namespace: NameSpace,
+		Namespace: nameSpace,
 		Name:      "battery_charge_low",
 		Help:      "Remaining battery level when UPS switches to LB state (percent)",
 	})
 
 	batteryChargeWarning = prometheus.NewGauge(prometheus.GaugeOpts{
-		Namespace: NameSpace,
+		Namespace: nameSpace,
 		Name:      "battery_charge_warning",
 		Help:      "Battery level when UPS switches to \"Warning\" state (percent)",
 	})
 
 	batteryPacks = prometheus.NewGauge(prometheus.GaugeOpts{
-		Namespace: NameSpace,
+		Namespace: nameSpace,
 		Name:      "battery_pack",
 		Help:      "Number of battery packs on the UPS",
 	})
 
 	batteryType = prometheus.NewGaugeVec(prometheus.GaugeOpts{
-		Namespace: NameSpace,
+		Namespace: nameSpace,
 		Name:      "battery_type",
 		Help:      "Battery chemistry",
 	}, []string{"type"})
 
 	batteryVoltage = prometheus.NewGauge(prometheus.GaugeOpts{
-		Namespace: NameSpace,
+		Namespace: nameSpace,
 		Name:      "battery_voltage",
 		Help:      "Current battery voltage",
 	})
 
 	batteryVoltageNominal = prometheus.NewGauge(prometheus.GaugeOpts{
-		Namespace: NameSpace,
+		Namespace: nameSpace,
 		Name:      "battery_voltage_nominal",
 		Help:      "Nominal battery voltage",
 	})
 
 	deviceMfr = prometheus.NewGaugeVec(prometheus.GaugeOpts{
-		Namespace: NameSpace,
+		Namespace: nameSpace,
 		Name:      "device_mfr",
 		Help:      "Device manufacturer",
 	}, []string{"manufacturer"})
 
 	deviceModel = prometheus.NewGaugeVec(prometheus.GaugeOpts{
-		Namespace: NameSpace,
+		Namespace: nameSpace,
 		Name:      "device_model",
 		Help:      "Device model",
 	}, []string{"model"})
 
 	deviceType = prometheus.NewGaugeVec(prometheus.GaugeOpts{
-		Namespace: NameSpace,
+		Namespace: nameSpace,
 		Name:      "device_type",
 		Help:      "Device type (ups, pdu, scd, psu, ats)",
 	}, []string{"type"})
 
 	driverName = prometheus.NewGaugeVec(prometheus.GaugeOpts{
-		Namespace: NameSpace,
+		Namespace: nameSpace,
 		Name:      "driver_name",
 		Help:      "Driver name",
 	}, []string{"name"})
 
 	driverVersion = prometheus.NewGaugeVec(prometheus.GaugeOpts{
-		Namespace: NameSpace,
+		Namespace: nameSpace,
 		Name:      "driver_version",
 		Help:      "Driver version (NUT release)",
 	}, []string{"version"})
 
 	driverVersionData = prometheus.NewGaugeVec(prometheus.GaugeOpts{
-		Namespace: NameSpace,
+		Namespace: nameSpace,
 		Name:      "driver_version_data",
 		Help:      "Version of the internal data mapping, for generic drivers",
 	}, []string{"data"})
 
 	inputVoltage = prometheus.NewGauge(prometheus.GaugeOpts{
-		Namespace: NameSpace,
+		Namespace: nameSpace,
 		Name:      "input_voltage",
 		Help:      "Current input voltage",
 	})
 
 	inputVoltageNominal = prometheus.NewGauge(prometheus.GaugeOpts{
-		Namespace: NameSpace,
+		Namespace: nameSpace,
 		Name:      "input_voltage_nominal",
 		Help:      "Nominal input voltage",
 	})
 
 	outputVoltage = prometheus.NewGauge(prometheus.GaugeOpts{
-		Namespace: NameSpace,
+		Namespace: nameSpace,
 		Name:      "output_voltage",
 		Help:      "Current output voltage",
 	})
 
 	outputVoltageNominal = prometheus.NewGauge(prometheus.GaugeOpts{
-		Namespace: NameSpace,
+		Namespace: nameSpace,
 		Name:      "output_voltage_nominal",
 		Help:      "Nominal output voltage",
 	})
 
 	upsBeeperStatus = prometheus.NewGaugeVec(prometheus.GaugeOpts{
-		Namespace: NameSpace,
+		Namespace: nameSpace,
 		Name:      "ups_beeper_status",
 		Help:      "UPS beeper status (enabled, disabled or muted)",
 	}, []string{"status"})
 
 	upsDelayShut = prometheus.NewGauge(prometheus.GaugeOpts{
-		Namespace: NameSpace,
+		Namespace: nameSpace,
 		Name:      "ups_delay_shutdown",
 		Help:      "Interval to wait after shutdown with delay command (seconds)",
 	})
 
 	upsDelayStart = prometheus.NewGauge(prometheus.GaugeOpts{
-		Namespace: NameSpace,
+		Namespace: nameSpace,
 		Name:      "ups_delay_start",
 		Help:      "Interval to wait before restarting the load (seconds)",
 	})
 
 	upsLoad = prometheus.NewGauge(prometheus.GaugeOpts{
-		Namespace: NameSpace,
+		Namespace: nameSpace,
 		Name:      "ups_load",
 		Help:      "Current UPS load (percent)",
 	})
 
 	upsMfr = prometheus.NewGaugeVec(prometheus.GaugeOpts{
-		Namespace: NameSpace,
+		Namespace: nameSpace,
 		Name:      "ups_mfr",
 		Help:      "UPS manufacturer",
 	}, []string{"manufacturer"})
 
 	upsModel = prometheus.NewGaugeVec(prometheus.GaugeOpts{
-		Namespace: NameSpace,
+		Namespace: nameSpace,
 		Name:      "ups_model",
 		Help:      "UPS model",
 	}, []string{"model"})
 
 	upsPowerNominal = prometheus.NewGauge(prometheus.GaugeOpts{
-		Namespace: NameSpace,
+		Namespace: nameSpace,
 		Name:      "ups_power_nominal",
 		Help:      "Nominal value of apparent power (Volt-Amps)",
 	})
 
 	upsRealPowerNominal = prometheus.NewGauge(prometheus.GaugeOpts{
-		Namespace: NameSpace,
+		Namespace: nameSpace,
 		Name:      "ups_real_power_nominal",
 		Help:      "Nominal value of real power (Watts)",
 	})
 
 	upsTemp = prometheus.NewGauge(prometheus.GaugeOpts{
-		Namespace: NameSpace,
+		Namespace: nameSpace,
 		Name:      "ups_temp",
 		Help:      "UPS Temperature (degrees C)",
 	})
 
 	upsStatus = prometheus.NewGauge(prometheus.GaugeOpts{
-		Namespace: NameSpace,
+		Namespace: nameSpace,
 		Name:      "ups_status",
 		Help:      "Current UPS Status (0=Calibration, 1=SmartTrim, 2=SmartBoost, 3=Online, 4=OnBattery, 5=Overloaded, 6=LowBattery, 7=ReplaceBattery, 8=OnBypass, 9=Off, 10=Charging, 11=Discharging)",
 	})

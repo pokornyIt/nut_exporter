@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	NameSpace       = "nut"
+	nameSpace       = "nut"
 	applicationName = "nut_exporter"
 )
 
@@ -60,13 +60,13 @@ func updateStatus(output string) {
 	}
 }
 
-func readVarList(conn Conn) string {
-	err := conn.Open()
+func readVarList(conn connection) string {
+	err := conn.open()
 	if err != nil {
 		return ""
 	}
-	defer conn.Close()
-	data, err := conn.GetList("VAR")
+	defer conn.close()
+	data, err := conn.getList("VAR")
 	if err != nil {
 		_ = level.Error(logger).Log("msg", err)
 		return ""
@@ -83,7 +83,7 @@ func recordMetrics() {
 	}
 	prometheus.MustRegister(upsStatus)
 	_ = level.Debug(logger).Log("msg", "create connection for NUT server", "host", config.getServer())
-	connection := *New(config.getServer(), config.User, config.Password, config.UpsName)
+	connection := *newConnection(config.getServer(), config.User, config.Password, config.UpsName)
 
 	go func() {
 		for {
@@ -119,7 +119,7 @@ func main() {
 	logger = promlog.New(promlogConfig)
 	_ = level.Info(logger).Log("msg", "Starting NUT exporter on ups "+config.UpsName, "version", version.Info())
 
-	err := config.LoadFile(*configFile)
+	err := config.loadFile(*configFile)
 
 	if *showConfig {
 		_ = level.Info(logger).Log("msg", "show only configuration ane exit")
