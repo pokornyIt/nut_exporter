@@ -11,7 +11,7 @@ import (
 	"regexp"
 )
 
-type Config struct {
+type configData struct {
 	Server   string `yaml:"server" json:"server"`
 	UpsName  string `yaml:"upsName" json:"upsName"`
 	User     string `yaml:"user" json:"user"`
@@ -28,7 +28,7 @@ var (
 	pwd           = kingpin.Flag("nut.pwd", "NUT user password").PlaceHolder("pwd").Default("").String()
 	upsName       = kingpin.Flag("nut.ups", "name of UPS on NUT server").PlaceHolder("ups").Default("ups").String()
 	listenAddress = kingpin.Flag("web.listen-address", "Address on which to expose metrics and web interface.").Default(":8100").String()
-	config        = &Config{
+	config        = &configData{
 		Server:   "",
 		UpsName:  "ups",
 		User:     "",
@@ -46,7 +46,7 @@ func fileExists(filename string) bool {
 	return !info.IsDir()
 }
 
-func (c *Config) LoadFile(filename string) error {
+func (c *configData) loadFile(filename string) error {
 	if fileExists(filename) {
 		content, err := ioutil.ReadFile(filename)
 		if err != nil {
@@ -98,11 +98,11 @@ func (c *Config) LoadFile(filename string) error {
 	return nil
 }
 
-func (c *Config) getServer() string {
+func (c *configData) getServer() string {
 	return fmt.Sprintf("%s:%d", c.Server, c.Port)
 }
 
-func (c *Config) print() string {
+func (c *configData) print() string {
 	p := "Not set!"
 	if len(c.Password) > 0 {
 		p = "****"

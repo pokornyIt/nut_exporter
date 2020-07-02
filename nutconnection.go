@@ -12,18 +12,18 @@ import (
 
 // protocol details https://networkupstools.org/docs/developer-guide.chunked/ar01s09.html
 
-type Conn struct {
+type connection struct {
 	Host       string
 	User, Pass string
 	UPSName    string
 	TCPConn    net.Conn
 }
 
-func New(host, user, pass, upsName string) *Conn {
-	return &Conn{host, user, pass, upsName, nil}
+func newConnection(host, user, pass, upsName string) *connection {
+	return &connection{host, user, pass, upsName, nil}
 }
 
-func (conn *Conn) Open() error {
+func (conn *connection) open() error {
 	if conn.TCPConn != nil {
 		_ = conn.TCPConn.Close()
 	}
@@ -33,17 +33,17 @@ func (conn *Conn) Open() error {
 		return err
 	}
 	conn.TCPConn = dialedConn
-	_, err = conn.CommandExpect("USERNAME "+conn.User, "OK")
+	_, err = conn.commandExpect("USERNAME "+conn.User, "OK")
 	if err != nil {
 		_ = level.Error(logger).Log("msg", err, "ups", conn.UPSName)
 		return err
 	}
-	_, err = conn.CommandExpect("PASSWORD "+conn.Pass, "OK")
+	_, err = conn.commandExpect("PASSWORD "+conn.Pass, "OK")
 	if err != nil {
 		_ = level.Error(logger).Log("msg", err, "ups", conn.UPSName)
 		return err
 	}
-	_, err = conn.CommandExpect("LOGIN "+conn.UPSName, "OK")
+	_, err = conn.commandExpect("LOGIN "+conn.UPSName, "OK")
 	if err != nil {
 		_ = level.Error(logger).Log("msg", err, "ups", conn.UPSName)
 		return err
@@ -52,15 +52,15 @@ func (conn *Conn) Open() error {
 	return nil
 }
 
-func (conn *Conn) Close() {
+func (conn *connection) close() {
 	if conn.TCPConn != nil {
-		_, _ = conn.CommandExpect("LOGOUT", "OK")
+		_, _ = conn.commandExpect("LOGOUT", "OK")
 		_ = conn.TCPConn.Close()
 	}
 	conn.TCPConn = nil
 }
 
-func (conn *Conn) Command(input string) (string, error) {
+func (conn *connection) command(input string) (string, error) {
 	_, _ = fmt.Fprintf(conn.TCPConn, "%s\r\n", input)
 	output, err := bufio.NewReader(conn.TCPConn).ReadString('\n')
 	if err != nil {
@@ -69,7 +69,7 @@ func (conn *Conn) Command(input string) (string, error) {
 	return strings.TrimSuffix(output, "\n"), nil
 }
 
-func (conn *Conn) CommandList(input string) ([]string, error) {
+func (conn *connection) commandList(input string) ([]string, error) {
 	_, _ = fmt.Fprintf(conn.TCPConn, "%s\r\n", input)
 	reader := bufio.NewReader(conn.TCPConn)
 	output := textproto.NewReader(reader)
@@ -89,8 +89,8 @@ func (conn *Conn) CommandList(input string) ([]string, error) {
 	return data, nil
 }
 
-func (conn *Conn) CommandExpect(input, expected string) (string, error) {
-	result, err := conn.Command(input)
+func (conn *connection) commandExpect(input, expected string) (string, error) {
+	result, err := conn.command(input)
 	if err != nil {
 		return result, err
 	}
@@ -100,8 +100,8 @@ func (conn *Conn) CommandExpect(input, expected string) (string, error) {
 	return result, nil
 }
 
-func (conn *Conn) GetVar(variable string) (string, error) {
-	out, err := conn.Command("GET VAR " + conn.UPSName + " " + variable)
+func (conn *connection) getVar(variable string) (string, error) {
+	out, err := conn.command("GET VAR " + conn.UPSName + " " + variable)
 	if err != nil {
 		_ = level.Error(logger).Log("msg", "problem read VAR ["+variable+"]", "error", err, "ups", conn.UPSName, "data", out)
 		return out, err
@@ -110,8 +110,8 @@ func (conn *Conn) GetVar(variable string) (string, error) {
 	return strings.TrimSuffix(strings.TrimPrefix(strings.Split(out, " ")[3], "\""), "\""), nil
 }
 
-func (conn *Conn) GetList(typeName string) (string, error) {
-	out, err := conn.CommandList("LIST " + typeName + " " + conn.UPSName)
+func (conn *connection) getList(typeName string) (string, error) {
+	out, err := conn.commandList("LIST " + typeName + " " + conn.UPSName)
 	if err != nil {
 		_ = level.Error(logger).Log("msg", "problem read LIST ["+typeName+"]", "error", err, "ups", conn.UPSName)
 		return strings.Join(out, "\n"), err
