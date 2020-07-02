@@ -46,6 +46,33 @@ func fileExists(filename string) bool {
 	return !info.IsDir()
 }
 
+func (c *configData) validate() error {
+	match, err := regexp.MatchString("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$", c.Server)
+	if !match || err != nil {
+		match, err = regexp.MatchString("^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$", c.Server)
+		if !match || err != nil {
+			return errors.New("NUT server address isn't valid FQDN or IP address")
+		}
+	}
+	if len(c.User) < 1 {
+		return errors.New("NUT User must be defined")
+	}
+	if len(c.Password) < 1 {
+		return errors.New("NUT User password must be defined")
+	}
+	if len(c.UpsName) < 1 {
+		return errors.New("UPS name must be defined")
+	}
+	if c.Port < 1024 || c.Port > 65535 {
+		return errors.New("defined port not valid")
+	}
+	if c.Refresh < 5 || c.Refresh > 300 {
+		return errors.New("refresh time is out of range (5-300 sec)")
+	}
+
+	return nil
+}
+
 func (c *configData) loadFile(filename string) error {
 	if fileExists(filename) {
 		content, err := ioutil.ReadFile(filename)
@@ -72,30 +99,7 @@ func (c *configData) loadFile(filename string) error {
 	if len(*upsName) > 0 {
 		c.UpsName = *upsName
 	}
-
-	match, err := regexp.MatchString("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$", c.Server)
-	if !match || err != nil {
-		match, err = regexp.MatchString("^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$", c.Server)
-		if !match || err != nil {
-			return errors.New("NUT server address isn't valid FQDN or IP address")
-		}
-	}
-	if len(c.User) < 1 {
-		return errors.New("NUT User must be defined")
-	}
-	if len(c.Password) < 1 {
-		return errors.New("NUT User password must be defined")
-	}
-	if len(c.UpsName) < 1 {
-		return errors.New("UPS name must be defined")
-	}
-	if c.Port < 1024 || c.Port > 65535 {
-		return errors.New("defined port not valid")
-	}
-	if c.Refresh < 5 || c.Refresh > 300 {
-		return errors.New("refresh time is out of range (5-300 sec)")
-	}
-	return nil
+	return c.validate()
 }
 
 func (c *configData) getServer() string {

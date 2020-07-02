@@ -100,16 +100,16 @@ func (conn *connection) commandExpect(input, expected string) (string, error) {
 	return result, nil
 }
 
-func (conn *connection) getVar(variable string) (string, error) {
-	out, err := conn.command("GET VAR " + conn.UPSName + " " + variable)
-	if err != nil {
-		_ = level.Error(logger).Log("msg", "problem read VAR ["+variable+"]", "error", err, "ups", conn.UPSName, "data", out)
-		return out, err
-	}
-	_ = level.Debug(logger).Log("msg", "success read VAR ["+variable+"]", "data", out)
-	return strings.TrimSuffix(strings.TrimPrefix(strings.Split(out, " ")[3], "\""), "\""), nil
-}
-
+//func (conn *connection) getVar(variable string) (string, error) {
+//	out, err := conn.command("GET VAR " + conn.UPSName + " " + variable)
+//	if err != nil {
+//		_ = level.Error(logger).Log("msg", "problem read VAR ["+variable+"]", "error", err, "ups", conn.UPSName, "data", out)
+//		return out, err
+//	}
+//	_ = level.Debug(logger).Log("msg", "success read VAR ["+variable+"]", "data", out)
+//	return strings.TrimSuffix(strings.TrimPrefix(strings.Split(out, " ")[3], "\""), "\""), nil
+//}
+//
 func (conn *connection) getList(typeName string) (string, error) {
 	out, err := conn.commandList("LIST " + typeName + " " + conn.UPSName)
 	if err != nil {
