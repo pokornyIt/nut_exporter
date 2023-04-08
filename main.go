@@ -122,7 +122,7 @@ func main() {
 	err := config.loadFile(*configFile)
 
 	if *showConfig {
-		_ = level.Info(logger).Log("msg", "show only configuration ane exit")
+		_ = level.Info(logger).Log("msg", "show only configuration and exit")
 		fmt.Print(config.print())
 		os.Exit(0)
 	}
