@@ -43,12 +43,7 @@ func (conn *connection) open() error {
 		_ = level.Error(logger).Log("msg", err, "ups", conn.UPSName)
 		return err
 	}
-	_, err = conn.commandExpect("LOGIN "+conn.UPSName, "OK")
-	if err != nil {
-		_ = level.Error(logger).Log("msg", err, "ups", conn.UPSName)
-		return err
-	}
-	_ = level.Debug(logger).Log("msg", "success login to NUT server for ups name ["+conn.UPSName+"]", "ups", conn.UPSName)
+	_ = level.Debug(logger).Log("msg", "authenticated to NUT server for ups name ["+conn.UPSName+"]", "ups", conn.UPSName)
 	return nil
 }
 

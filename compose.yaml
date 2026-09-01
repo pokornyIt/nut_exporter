@@ -1,0 +1,13 @@
+services:
+  nut-exporter:
+    image: registry.lab.pokornyit.cz/nut_exporter:latest
+    container_name: nut-exporter
+    mem_limit: 128m
+    restart: unless-stopped
+    ports:
+      - "8100:8100"
+    volumes:
+      - "./nut.yml:/etc/nut_exporter/nut.yml:ro"
+    command:
+      - "--config.file=/etc/nut_exporter/nut.yml"
+      - "--log.level=debug"
